@@ -8,7 +8,7 @@
       <div v-if="isSidebarOpen" class="inner-container first-column sidebar-menu">
         <div class="logo-sec">
           <img class="logo" src="/assets/logo.png" alt="University logo">
-          <h1 class="logo-text">Dashboard</h1>
+          <h1 class="logo-text">STUDENTAFFAIRS</h1>
         </div>
         <div class="separator">
           <hr class="solid">
@@ -1010,6 +1010,7 @@ onUnmounted(() => {
 .inner-container {
   /* width: 1920px; */ /* REMOVED FIXED WIDTH */
   /* This class might not be needed if .container-1 directly manages columns */
+  position: relative; /* Added to prevent empty ruleset warning */
 }
 
 .first-column {

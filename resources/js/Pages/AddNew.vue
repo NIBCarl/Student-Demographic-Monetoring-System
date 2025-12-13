@@ -12,7 +12,7 @@
       <div v-if="isSidebarOpen" class="inner-container first-column sidebar-menu">
         <div class="logo-sec">
           <img class="logo" src="/assets/logo.png" alt="University logo" />
-          <h1 class="logo-text">Dashboard</h1>
+          <h1 class="logo-text">STUDENTAFFAIRS</h1>
         </div>
         <div class="separator">
           <hr class="solid" />
@@ -356,7 +356,7 @@
 
           <!-- Transportation & Ethnicity Section -->
           <h3 class="section-title">Transportation & Ethnicity</h3>
-          <div class="form-row-3">
+          <div class="form-row-2">
             <div class="form-group">
               <label>Mode of Transportation to School</label>
               <select v-model="form.transportation_mode" required>
@@ -374,6 +374,9 @@
               <input v-model="form.travel_time_minutes" type="number" min="0" placeholder="e.g., 30" required />
               <div v-if="errors.travel_time_minutes" class="error">{{ errors.travel_time_minutes }}</div>
             </div>
+          </div>
+
+          <div class="form-row-2">
             <div class="form-group">
               <label>Ethnicity</label>
               <select v-model="form.ethnicity" required>
@@ -382,6 +385,30 @@
                 <option value="Non-Indigenous">Non-Indigenous</option>
               </select>
               <div v-if="errors.ethnicity" class="error">{{ errors.ethnicity }}</div>
+            </div>
+            <div class="form-group" v-if="form.ethnicity === 'Indigenous'">
+              <label>Indigenous Group</label>
+              <select v-model="form.indigenous_group" required>
+                <option value="">Select Indigenous Group</option>
+                <option value="Ata">Ata</option>
+                <option value="Bagobo">Bagobo</option>
+                <option value="Guiangga">Guiangga</option>
+                <option value="Mamanwa">Mamanwa</option>
+                <option value="Magguangan">Magguangan</option>
+                <option value="Mandaya">Mandaya</option>
+                <option value="Banwa-on">Banwa-on</option>
+                <option value="Bukidnon">Bukidnon</option>
+                <option value="Dulangan">Dulangan</option>
+                <option value="Kalagan">Kalagan</option>
+                <option value="Kulaman">Kulaman</option>
+                <option value="Manobo">Manobo</option>
+                <option value="Subanon">Subanon</option>
+                <option value="Tagabili">Tagabili</option>
+                <option value="Takakaolo">Takakaolo</option>
+                <option value="Talandig">Talandig</option>
+                <option value="Tiruray or Teduray">Tiruray or Teduray</option>
+              </select>
+              <div v-if="errors.indigenous_group" class="error">{{ errors.indigenous_group }}</div>
             </div>
           </div>
 
@@ -475,6 +502,7 @@ const form = useForm({
   transportation_mode: '',
   travel_time_minutes: null, // Use null for numbers that can be empty
   ethnicity: '',
+  indigenous_group: '',
   pwd: false,
   pwd_id: '',
   housing_status: '',

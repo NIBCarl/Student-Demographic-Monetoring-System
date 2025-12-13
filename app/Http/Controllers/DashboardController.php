@@ -52,6 +52,8 @@ class DashboardController extends Controller
                          DB::raw('SUM(CASE WHEN ethnicity = "Indigenous" THEN 1 ELSE 0 END) as indigenous'),
                          DB::raw('SUM(CASE WHEN pwd = 1 THEN 1 ELSE 0 END) as pwd'),
                          DB::raw('SUM(CASE WHEN is_solo_parent = 1 THEN 1 ELSE 0 END) as solo_parent'),
+                         DB::raw('AVG(latitude) as avg_latitude'),
+                         DB::raw('AVG(longitude) as avg_longitude'),
                          DB::raw('(count(*) * 100.0 / (SELECT count(*) FROM students)) as percentage'))
             ->groupBy('city')
             ->orderBy('total', 'desc')
@@ -64,7 +66,9 @@ class DashboardController extends Controller
                 'indigenous' => $location->indigenous,
                 'pwd' => $location->pwd,
                 'soloParent' => $location->solo_parent,
-                'percentage' => round($location->percentage, 1)
+                'percentage' => round($location->percentage, 1),
+                'lat' => $location->avg_latitude,
+                'lng' => $location->avg_longitude
             ];
         })->toArray();
     }

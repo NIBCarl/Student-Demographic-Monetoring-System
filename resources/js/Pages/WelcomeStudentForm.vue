@@ -319,6 +319,29 @@
                                     <option value="Non-Indigenous">Non-Indigenous</option>
                                 </select>
                             </div>
+                            <div v-if="form.ethnicity === 'Indigenous'">
+                                <label for="indigenous_group">Indigenous Group</label>
+                                <select id="indigenous_group" v-model="form.indigenous_group" class="input-field" required>
+                                    <option value="">Select Indigenous Group</option>
+                                    <option value="Ata">Ata</option>
+                                    <option value="Bagobo">Bagobo</option>
+                                    <option value="Guiangga">Guiangga</option>
+                                    <option value="Mamanwa">Mamanwa</option>
+                                    <option value="Magguangan">Magguangan</option>
+                                    <option value="Mandaya">Mandaya</option>
+                                    <option value="Banwa-on">Banwa-on</option>
+                                    <option value="Bukidnon">Bukidnon</option>
+                                    <option value="Dulangan">Dulangan</option>
+                                    <option value="Kalagan">Kalagan</option>
+                                    <option value="Kulaman">Kulaman</option>
+                                    <option value="Manobo">Manobo</option>
+                                    <option value="Subanon">Subanon</option>
+                                    <option value="Tagabili">Tagabili</option>
+                                    <option value="Takakaolo">Takakaolo</option>
+                                    <option value="Talandig">Talandig</option>
+                                    <option value="Tiruray or Teduray">Tiruray or Teduray</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div class="text-red-500 text-sm mt-2" v-if="form.hasErrors">
@@ -371,6 +394,7 @@ const form = useForm({
     transportation_mode: '',
     travel_time_minutes: null,
     ethnicity: '',
+    indigenous_group: '',
     pwd: false,
     pwd_id: '',
     housing_status: '',

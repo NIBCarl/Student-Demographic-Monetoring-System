@@ -22,6 +22,9 @@ class Student extends Model
         'city',
         'province',
         'postal_code',
+        'latitude',
+        'longitude',
+        'geocoded_address',
         'birth_date',
         'gender',
         'marital_status',
@@ -40,6 +43,7 @@ class Student extends Model
         'transportation_mode',
         'travel_time_minutes',
         'ethnicity',
+        'indigenous_group',
         'pwd',
         'pwd_id',
         'housing_status'

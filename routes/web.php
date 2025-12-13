@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Auth\LoginController;
 
+// Route path constants to avoid duplication
+const ROUTE_PROFILE = '/profile';
+
 Route::get('/', function () {
     if (auth()->check()) {
         return redirect()->route('add-new');
@@ -37,24 +40,6 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// Debug route to check remember token (remove in production)
-Route::get('/debug-remember', function () {
-    if (auth()->check()) {
-        $user = auth()->user();
-        return response()->json([
-            'logged_in' => true,
-            'user_id' => $user->id,
-            'user_email' => $user->email,
-            'remember_token_exists' => !empty($user->remember_token),
-            'remember_token_preview' => $user->remember_token ? substr($user->remember_token, 0, 10) . '...' : null,
-            'cookies' => request()->cookies->all(),
-        ]);
-    }
-    return response()->json([
-        'logged_in' => false,
-        'cookies' => request()->cookies->all(),
-    ]);
-})->name('debug.remember');
 
 // Protected routes
 Route::middleware('auth')->group(function () {
@@ -75,9 +60,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/student/{student}', [StudentController::class, 'destroy']);
     
     // Profile routes
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get(ROUTE_PROFILE, [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch(ROUTE_PROFILE, [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete(ROUTE_PROFILE, [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/student-analytics', [StudentAnalyticsController::class, 'index'])->name('student-analytics');
     Route::get('/analytics/demographics', [StudentAnalyticsController::class, 'getDemographics']);
     

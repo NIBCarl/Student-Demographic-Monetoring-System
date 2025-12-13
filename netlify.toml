@@ -1,0 +1,54 @@
+[build]
+  publish = "public"
+  command = "composer install --no-dev --optimize-autoloader && npm install && npm run build && php artisan config:cache && php artisan route:cache && php artisan view:cache"
+
+[build.environment]
+  PHP_VERSION = "8.2"
+  NODE_VERSION = "18"
+
+[[plugins]]
+  package = "netlify-plugin-php"
+
+[dev]
+  framework = "#custom"
+  command = "php artisan serve"
+  targetPort = 8000
+  port = 8888
+  autoLaunch = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.php"
+  status = 200
+  conditions = {Role = ["admin"]}
+
+# Handle Laravel routes
+[[redirects]]
+  from = "/api/*"
+  to = "/index.php"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/index.php"
+  status = 200
+
+[[redirects]]
+  from = "/student-list"
+  to = "/index.php"
+  status = 200
+
+[[redirects]]
+  from = "/add-new"
+  to = "/index.php"
+  status = 200
+
+[[redirects]]
+  from = "/login"
+  to = "/index.php"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.php"
+  status = 200

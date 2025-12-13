@@ -9,7 +9,7 @@
       <div v-if="isSidebarOpen" class="inner-container first-column sidebar-menu">
         <div class="logo-sec">
           <img class="logo" src="/assets/logo.png" alt="University logo" />
-          <h1 class="logo-text">Dashboard</h1>
+          <h1 class="logo-text">STUDENTAFFAIRS</h1>
         </div>
         <div class="separator">
           <hr class="solid" />
@@ -130,6 +130,38 @@
       </div>
       <div class="overview-location">
         <div class="headline-overview-location">
+          <h1 class="location-headline">Student Distribution Map</h1>
+        </div>
+        <div style="height: 400px; width: 100%; border-radius: 10px; overflow: hidden;">
+          <l-map ref="map" v-model:zoom="zoom" :center="center" :use-global-leaflet="false">
+            <l-tile-layer
+              :url="url"
+              :attribution="attribution"
+              layer-type="base"
+              name="OpenStreetMap"
+            ></l-tile-layer>
+
+            <l-marker 
+              v-for="marker in mapMarkers" 
+              :key="marker.id" 
+              :lat-lng="[marker.lat, marker.lng]"
+            >
+              <l-popup>
+                <div class="map-popup">
+                  <h3>{{ marker.name }}</h3>
+                  <p><strong>Total Students:</strong> {{ marker.total }}</p>
+                  <p><strong>Indigenous:</strong> {{ marker.indigenous }}</p>
+                  <p><strong>PWD:</strong> {{ marker.pwd }}</p>
+                  <p><strong>Solo Parent:</strong> {{ marker.soloParent }}</p>
+                </div>
+              </l-popup>
+            </l-marker>
+          </l-map>
+        </div>
+      </div>
+
+      <div class="overview-location">
+        <div class="headline-overview-location">
           <h1 class="location-headline">Location</h1>
           <a class="admin" href="#"><i class="fas fa-map-marker map-marker-icon"></i>Student address</a>
         </div>
@@ -162,10 +194,12 @@
 
 <script setup>
 import { Link, router } from '@inertiajs/vue3';
-import { ref, onMounted, watch, onUnmounted, nextTick } from 'vue';
+import { ref, onMounted, watch, onUnmounted, nextTick, computed } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import Chart from 'chart.js/auto';
 import AddNewCTA from '@/Components/AddNewCTA.vue';
+import "leaflet/dist/leaflet.css";
+import { LMap, LTileLayer, LMarker, LPopup } from "@vue-leaflet/vue-leaflet";
 
 // Sidebar toggle state and function with mobile detection
 const isMobile = ref(window.innerWidth <= 768);
@@ -173,6 +207,10 @@ const isSidebarOpen = ref(window.innerWidth > 768); // Open by default on deskto
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
+  // Invalidate map size after transition to prevent grey areas
+  setTimeout(() => {
+    window.dispatchEvent(new Event('resize'));
+  }, 350);
 };
 
 // Handle window resize
@@ -202,6 +240,28 @@ const totals = ref({
 const locations = ref([]);
 let demographicsChart = null;
 let soloParentChart = null;
+
+// Map Configuration
+const zoom = ref(10);
+const center = ref([9.7905, 125.4892]); // Default center (Surigao City approx)
+const url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+// Compute markers from location stats with real coordinates
+const mapMarkers = computed(() => {
+  return locations.value.map((loc, index) => {
+    // Use real coordinates from backend, fallback to default location if missing
+    const baseLat = 9.7905;
+    const baseLng = 125.4892;
+    
+    return {
+      ...loc,
+      lat: loc.lat || baseLat,
+      lng: loc.lng || baseLng,
+      id: index
+    };
+  });
+});
 
 const updateStats = async () => {
   try {

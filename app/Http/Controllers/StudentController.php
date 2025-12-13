@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use App\Services\GeocodingService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class StudentController extends Controller
 {
+    // Route constants to avoid duplication
+    private const ROUTE_STUDENT_LIST = '/student-list';
+
     public function index(Request $request)
     {
         $search = $request->input('search', '');
@@ -124,10 +128,28 @@ class StudentController extends Controller
             'transportation_mode' => 'required|in:Car,Jeep/Multicab,Motorcycle,Tricycle,None',
             'travel_time_minutes' => 'required|integer',
             'ethnicity' => 'required|in:Indigenous,Non-Indigenous',
+            'indigenous_group' => 'nullable|string|max:255',
             'pwd' => 'boolean',
             'pwd_id' => 'nullable|string|max:255',
             'housing_status' => 'required|in:Owned,Renting,Living with Relatives',
         ]);
+
+        // Geocode the address to get latitude and longitude
+        $geocodingService = new GeocodingService();
+        $coordinates = $geocodingService->geocodeAddress(
+            $validated['address'],
+            $validated['barangay'],
+            $validated['city'],
+            $validated['province'],
+            $validated['postal_code']
+        );
+
+        // Add coordinates to the validated data if geocoding was successful
+        if ($coordinates) {
+            $validated['latitude'] = $coordinates['latitude'];
+            $validated['longitude'] = $coordinates['longitude'];
+            $validated['geocoded_address'] = $coordinates['display_name'];
+        }
 
         $student = Student::create($validated);
         
@@ -180,6 +202,7 @@ class StudentController extends Controller
             'transportation_mode' => 'required|in:Car,Jeep/Multicab,Motorcycle,Tricycle,None',
             'travel_time_minutes' => 'required|integer',
             'ethnicity' => 'required|in:Indigenous,Non-Indigenous',
+            'indigenous_group' => 'nullable|string|max:255',
             'pwd' => 'boolean',
             'pwd_id' => 'nullable|string|max:255',
             'housing_status' => 'required|in:Owned,Renting,Living with Relatives',
@@ -189,7 +212,7 @@ class StudentController extends Controller
         
         session()->flash('message', 'Student updated successfully!');
         
-        return redirect('/student-list');
+        return redirect(self::ROUTE_STUDENT_LIST);
     }
 
     public function destroy($id)
@@ -199,7 +222,7 @@ class StudentController extends Controller
         
         session()->flash('message', 'Student deleted successfully!');
         
-        return redirect('/student-list');
+        return redirect(self::ROUTE_STUDENT_LIST);
     }
 
     public function export(Request $request)
@@ -268,7 +291,7 @@ class StudentController extends Controller
             return $this->exportPDF($currentPageStudents);
         }
         
-        return redirect('/student-list');
+        return redirect(self::ROUTE_STUDENT_LIST);
     }
 
     private function exportCSV($students, $format)
@@ -304,6 +327,7 @@ class StudentController extends Controller
                 'Marital Status',
                 'Religion',
                 'Ethnicity',
+                'Indigenous Group',
                 'Family Income',
                 'Study Device'
             ]);
@@ -320,6 +344,7 @@ class StudentController extends Controller
                     $student->marital_status,
                     $student->religion,
                     $student->ethnicity ?? 'N/A',
+                    $student->indigenous_group ?? 'N/A',
                     $student->family_income ?? 'N/A',
                     $student->study_device ?? 'N/A'
                 ]);

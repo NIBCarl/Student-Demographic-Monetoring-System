@@ -5,7 +5,7 @@
           <!-- Logo and Dashboard Title -->
           <div class="logo-sec">
             <img class="logo" src="/assets/logo.png" alt="University logo" />
-            <h1 class="logo-text">Dashboard</h1>
+            <h1 class="logo-text">STUDENTAFFAIRS</h1>
           </div>
           
           <!-- Separator -->

@@ -10,6 +10,10 @@ use Inertia\Response;
 
 class StudentAnalyticsController extends Controller
 {
+    // SQL aggregate constants to avoid duplication
+    private const SQL_COUNT = 'count(*) as count';
+    private const SQL_TOTAL = 'count(*) as total';
+
     public function index(): Response
     {
         return Inertia::render('StudentAnalytics', [
@@ -27,10 +31,10 @@ class StudentAnalyticsController extends Controller
                 'female' => Student::where('gender', 'Female')->count(),
                 'other' => Student::where('gender', 'Other')->count(),
             ],
-            'transportStats' => Student::select('transportation_mode', DB::raw('count(*) as count'))
+            'transportStats' => Student::select('transportation_mode', DB::raw(self::SQL_COUNT))
                 ->groupBy('transportation_mode')
                 ->pluck('count', 'transportation_mode'),
-            'incomeStats' => Student::select('family_income_bracket', DB::raw('count(*) as count'))
+            'incomeStats' => Student::select('family_income_bracket', DB::raw(self::SQL_COUNT))
                 ->groupBy('family_income_bracket')
                 ->pluck('count', 'family_income_bracket'),
             'avgTravelTime' => round(Student::avg('travel_time_minutes')),
@@ -44,7 +48,7 @@ class StudentAnalyticsController extends Controller
     private function getLocationStats(): array
     {
         return Student::select('city',
-            DB::raw('count(*) as total'),
+            DB::raw(self::SQL_TOTAL),
             DB::raw('avg(household_size) as avgHouseholdSize'),
             DB::raw('avg(travel_time_minutes) as avgTravelTime'))
             ->groupBy('city')
@@ -65,7 +69,7 @@ class StudentAnalyticsController extends Controller
     private function getAverageIncomeBracket(string $city): string
     {
         $brackets = Student::where('city', $city)
-            ->select('family_income_bracket', DB::raw('count(*) as count'))
+            ->select('family_income_bracket', DB::raw(self::SQL_COUNT))
             ->groupBy('family_income_bracket')
             ->orderBy('count', 'desc')
             ->first();
@@ -76,14 +80,14 @@ class StudentAnalyticsController extends Controller
     private function getDemographicStats(): array
     {
         return [
-            'genderDistribution' => Student::select('gender', DB::raw('count(*) as total'))
+            'genderDistribution' => Student::select('gender', DB::raw(self::SQL_TOTAL))
                 ->groupBy('gender')
                 ->get(),
-            'transportationMode' => Student::select('transportation_mode', DB::raw('count(*) as total'))
+            'transportationMode' => Student::select('transportation_mode', DB::raw(self::SQL_TOTAL))
                 ->groupBy('transportation_mode')
                 ->get(),
             'averageTravelTime' => Student::avg('travel_time_minutes'),
-            'incomeDistribution' => Student::select('family_income_bracket', DB::raw('count(*) as total'))
+            'incomeDistribution' => Student::select('family_income_bracket', DB::raw(self::SQL_TOTAL))
                 ->groupBy('family_income_bracket')
                 ->get(),
             'socioDemo' => [
