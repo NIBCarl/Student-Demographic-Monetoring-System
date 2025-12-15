@@ -310,6 +310,15 @@
               </div>
             </div>
             
+            <!-- OFW Dependent Row -->
+            <div class="checkbox-row-with-input">
+              <div class="checkbox-wrapper">
+                <input type="checkbox" v-model="form.is_ofw_dependent" class="checkbox-input" id="ofwDependent">
+                <label class="checkbox-text" for="ofwDependent">Are you a dependent of an OFW parent or legal guardian?</label>
+                <div v-if="errors.is_ofw_dependent" class="error">{{ errors.is_ofw_dependent }}</div>
+              </div>
+            </div>
+            
             <!-- Part-Time Job Row -->
             <div class="checkbox-row-with-input">
               <div class="checkbox-wrapper">
@@ -332,21 +341,29 @@
                 <div v-if="errors.pwd_id" class="error">{{ errors.pwd_id }}</div>
               </div>
             </div>
+            
+            <!-- Disability Type Row (shown when PWD is checked) -->
+            <div v-if="form.pwd" class="form-group">
+              <label>Type of Disability</label>
+              <select v-model="form.disability_type" required>
+                <option value="">Select Type of Disability</option>
+                <option value="Orthopedic Disability">Orthopedic Disability</option>
+                <option value="Epilepsy">Epilepsy</option>
+                <option value="Speech & Language Deficit">Speech & Language Deficit</option>
+                <option value="Physical Disability">Physical Disability</option>
+                <option value="Brachydactyly">Brachydactyly</option>
+                <option value="Psychosocial">Psychosocial</option>
+                <option value="Visual Impairment">Visual Impairment</option>
+                <option value="Congenital/deformity both hands">Congenital/deformity both hands</option>
+                <option value="Development Disability">Development Disability</option>
+                <option value="Strabismus">Strabismus</option>
+                <option value="Other">Other(s)</option>
+              </select>
+              <div v-if="errors.disability_type" class="error">{{ errors.disability_type }}</div>
+            </div>
           </div>
 
           <div class="form-row-2">
-            <div class="form-group">
-              <label>Daily Fare (PHP)</label>
-              <select v-model="form.daily_fare">
-                <option value="">Select Daily Fare</option>
-                <option value="Php 20.00 - Php 50.00">Php 20.00 - Php 50.00</option>
-                <option value="Php. 51.00 - Php 100.00">Php. 51.00 - Php 100.00</option>
-                <option value="Php 101.00 - Php 200.00">Php 101.00 - Php 200.00</option>
-                <option value="Php 201.00 - Php 300.00">Php 201.00 - Php 300.00</option>
-                <option value="N/A">N/A</option>
-              </select>
-              <div v-if="errors.daily_fare" class="error">{{ errors.daily_fare }}</div>
-            </div>
             <div class="form-group">
               <label>Monthly Boarding/Rental (PHP, if applicable)</label>
               <input v-model="form.monthly_rental" type="number" min="0" step="0.01" placeholder="e.g., 2500" />
@@ -356,24 +373,49 @@
 
           <!-- Transportation & Ethnicity Section -->
           <h3 class="section-title">Transportation & Ethnicity</h3>
-          <div class="form-row-2">
-            <div class="form-group">
-              <label>Mode of Transportation to School</label>
-              <select v-model="form.transportation_mode" required>
-                <option value="">Select Transportation</option>
-                <option value="Car">Car</option>
-                <option value="Jeep/Multicab">Jeep/Multicab</option>
-                <option value="Motorcycle">Motorcycle</option>
-                <option value="Tricycle">Tricycle</option>
-                <option value="None">None</option>
-              </select>
-              <div v-if="errors.transportation_mode" class="error">{{ errors.transportation_mode }}</div>
+          
+          <!-- Transportation Checkboxes -->
+          <div class="form-group">
+            <label>Which of the following transportation does your family have? (Check all that apply)</label>
+            <p class="input-helper-text">If None, enter how much you spend on fare per day.</p>
+            <div class="checkbox-section">
+              <div class="checkbox-row-with-input">
+                <div class="checkbox-wrapper">
+                  <input type="checkbox" v-model="transportationModes" value="Car" class="checkbox-input" id="transCar">
+                  <label class="checkbox-text" for="transCar">Car</label>
+                </div>
+              </div>
+              <div class="checkbox-row-with-input">
+                <div class="checkbox-wrapper">
+                  <input type="checkbox" v-model="transportationModes" value="Jeep/Multicab" class="checkbox-input" id="transJeep">
+                  <label class="checkbox-text" for="transJeep">Jeep / Multicab</label>
+                </div>
+              </div>
+              <div class="checkbox-row-with-input">
+                <div class="checkbox-wrapper">
+                  <input type="checkbox" v-model="transportationModes" value="Motorcycle" class="checkbox-input" id="transMotorcycle">
+                  <label class="checkbox-text" for="transMotorcycle">Motorcycle</label>
+                </div>
+              </div>
+              <div class="checkbox-row-with-input">
+                <div class="checkbox-wrapper">
+                  <input type="checkbox" v-model="transportationModes" value="Tricycle" class="checkbox-input" id="transTricycle">
+                  <label class="checkbox-text" for="transTricycle">Tricycle</label>
+                </div>
+              </div>
+              <div class="checkbox-row-with-input">
+                <div class="checkbox-wrapper">
+                  <input type="checkbox" v-model="transportationModes" value="None" class="checkbox-input" id="transNone">
+                  <label class="checkbox-text" for="transNone">None</label>
+                </div>
+                <div v-if="transportationModes.includes('None')" class="conditional-input">
+                  <label for="daily_fare">Daily Fare (₱/day)</label>
+                  <input v-model="form.daily_fare" type="text" placeholder="e.g., 50" />
+                  <div v-if="errors.daily_fare" class="error">{{ errors.daily_fare }}</div>
+                </div>
+              </div>
             </div>
-            <div class="form-group">
-              <label>Travel Time to School (minutes)</label>
-              <input v-model="form.travel_time_minutes" type="number" min="0" placeholder="e.g., 30" required />
-              <div v-if="errors.travel_time_minutes" class="error">{{ errors.travel_time_minutes }}</div>
-            </div>
+            <div v-if="errors.transportation_mode" class="error">{{ errors.transportation_mode }}</div>
           </div>
 
           <div class="form-row-2">
@@ -471,6 +513,7 @@ defineProps({
 // Existing reactive variables for this page
 const showModal = ref(false); // For the admin profile modal
 const processing = ref(false); // For form submission state
+const transportationModes = ref([]); // For transportation checkboxes
 
 // Student Information Form definition
 const form = useForm({
@@ -492,6 +535,7 @@ const form = useForm({
   postal_code: '',
   study_device: '',
   is_solo_parent: false,
+  is_ofw_dependent: false,
   solo_parent_id: '',
   has_part_time_job: false,
   daily_fare: '',
@@ -505,6 +549,7 @@ const form = useForm({
   indigenous_group: '',
   pwd: false,
   pwd_id: '',
+  disability_type: '',
   housing_status: '',
   family_income: ''
 });
@@ -517,10 +562,13 @@ const toggleModal = () => {
 // Method to submit the student form
 const submitForm = () => {
   processing.value = true;
+  // Convert transportation modes array to comma-separated string
+  form.transportation_mode = transportationModes.value.join(',');
   form.post('/student', {
     preserveScroll: true,
     onSuccess: () => {
       form.reset();
+      transportationModes.value = [];
       processing.value = false;
       // Consider using Inertia.visit for navigation to ensure SPA behavior
       // Inertia.visit('/student-list'); 
@@ -1132,7 +1180,7 @@ input[type="radio"] {
 }
 
 /* ===== ENHANCED FORM INPUTS WITH DUAL SHADOWS ===== */
-.form-group input,
+.form-group input:not([type="checkbox"]),
 .form-group select {
     padding: 12px 16px;
     border: 1px solid #e2e8f0;
@@ -1150,13 +1198,13 @@ input[type="radio"] {
         0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
-.form-group input:hover,
+.form-group input:not([type="checkbox"]):hover,
 .form-group select:hover {
     border-color: #cbd5e0;
     background: linear-gradient(to bottom, #fafafa 0%, #f5f5f5 100%);
 }
 
-.form-group input:focus,
+.form-group input:not([type="checkbox"]):focus,
 .form-group select:focus {
     outline: none;
     border-color: #2d7d2d;

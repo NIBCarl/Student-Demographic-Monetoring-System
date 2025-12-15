@@ -35,6 +35,7 @@ class Student extends Model
         'family_income',
         'study_device',
         'is_solo_parent',
+        'is_ofw_dependent',
         'solo_parent_id',
         'has_part_time_job',
         'daily_fare',
@@ -46,6 +47,7 @@ class Student extends Model
         'indigenous_group',
         'pwd',
         'pwd_id',
+        'disability_type',
         'housing_status'
     ];
 

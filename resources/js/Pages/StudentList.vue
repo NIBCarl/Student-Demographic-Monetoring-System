@@ -609,7 +609,14 @@
 <script setup>
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
-import debounce from 'lodash/debounce';
+// Custom debounce function to avoid lodash dependency
+const debounce = (fn, delay) => {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn.apply(this, args), delay);
+  };
+};
 import AddNewCTA from '@/Components/AddNewCTA.vue';
 
 // Sidebar toggle state and function with mobile detection

@@ -257,6 +257,14 @@
                                 </div>
                             </div>
                             
+                            <!-- OFW Dependent Row -->
+                            <div class="checkbox-row-with-input">
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" id="is_ofw_dependent" v-model="form.is_ofw_dependent" class="checkbox-input" />
+                                    <label for="is_ofw_dependent" class="checkbox-text">Are you a dependent of an OFW parent or legal guardian?</label>
+                                </div>
+                            </div>
+                            
                             <!-- Part-Time Job Row -->
                             <div class="checkbox-row-with-input">
                                 <div class="checkbox-wrapper">
@@ -276,18 +284,23 @@
                                     <input type="text" id="pwd_id" v-model="form.pwd_id" class="input-field" placeholder="PWD ID No." />
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="daily_fare">Daily Fare</label>
-                                <select id="daily_fare" v-model="form.daily_fare" class="input-field">
-                                    <option value="">Select Daily Fare</option>
-                                    <option value="Php 20.00 - Php 50.00">Php 20.00 - Php 50.00</option>
-                                    <option value="Php. 51.00 - Php 100.00">Php. 51.00 - Php 100.00</option>
-                                    <option value="Php 101.00 - Php 200.00">Php 101.00 - Php 200.00</option>
-                                    <option value="Php 201.00 - Php 300.00">Php 201.00 - Php 300.00</option>
-                                    <option value="N/A">N/A</option>
+                            
+                            <!-- Disability Type (shown when PWD is checked) -->
+                            <div v-if="form.pwd">
+                                <label for="disability_type">Type of Disability</label>
+                                <select id="disability_type" v-model="form.disability_type" class="input-field" required>
+                                    <option value="">Select Type of Disability</option>
+                                    <option value="Orthopedic Disability">Orthopedic Disability</option>
+                                    <option value="Epilepsy">Epilepsy</option>
+                                    <option value="Speech & Language Deficit">Speech & Language Deficit</option>
+                                    <option value="Physical Disability">Physical Disability</option>
+                                    <option value="Brachydactyly">Brachydactyly</option>
+                                    <option value="Psychosocial">Psychosocial</option>
+                                    <option value="Visual Impairment">Visual Impairment</option>
+                                    <option value="Congenital/deformity both hands">Congenital/deformity both hands</option>
+                                    <option value="Development Disability">Development Disability</option>
+                                    <option value="Strabismus">Strabismus</option>
+                                    <option value="Other">Other(s)</option>
                                 </select>
                             </div>
                         </div>
@@ -295,22 +308,49 @@
                         <!-- Transportation & Ethnicity Section -->
                         <h3 class="section-heading">Transportation & Ethnicity</h3>
                         
-                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div>
-                                <label for="transportation_mode">Mode of Transportation</label>
-                                <select id="transportation_mode" v-model="form.transportation_mode" class="input-field" required>
-                                    <option value="">Select Transportation</option>
-                                    <option value="Car">Car</option>
-                                    <option value="Jeep/Multicab">Jeep/Multicab</option>
-                                    <option value="Motorcycle">Motorcycle</option>
-                                    <option value="Tricycle">Tricycle</option>
-                                    <option value="None">None</option>
-                                </select>
+                        <!-- Transportation Checkboxes -->
+                        <div class="form-group">
+                            <label>Which of the following transportation does your family have? (Check all that apply)</label>
+                            <p class="input-helper-text">If None, enter how much you spend on fare per day.</p>
+                            <div class="checkbox-section">
+                                <div class="checkbox-row-with-input">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" v-model="transportationModes" value="Car" class="checkbox-input" id="transCar">
+                                        <label class="checkbox-text" for="transCar">Car</label>
+                                    </div>
+                                </div>
+                                <div class="checkbox-row-with-input">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" v-model="transportationModes" value="Jeep/Multicab" class="checkbox-input" id="transJeep">
+                                        <label class="checkbox-text" for="transJeep">Jeep / Multicab</label>
+                                    </div>
+                                </div>
+                                <div class="checkbox-row-with-input">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" v-model="transportationModes" value="Motorcycle" class="checkbox-input" id="transMotorcycle">
+                                        <label class="checkbox-text" for="transMotorcycle">Motorcycle</label>
+                                    </div>
+                                </div>
+                                <div class="checkbox-row-with-input">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" v-model="transportationModes" value="Tricycle" class="checkbox-input" id="transTricycle">
+                                        <label class="checkbox-text" for="transTricycle">Tricycle</label>
+                                    </div>
+                                </div>
+                                <div class="checkbox-row-with-input">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" v-model="transportationModes" value="None" class="checkbox-input" id="transNone">
+                                        <label class="checkbox-text" for="transNone">None</label>
+                                    </div>
+                                    <div v-if="transportationModes.includes('None')" class="conditional-input">
+                                        <label for="daily_fare">Daily Fare (₱/day)</label>
+                                        <input v-model="form.daily_fare" type="text" class="input-field" placeholder="e.g., 50" />
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <label for="travel_time_minutes">Travel Time (Minutes)</label>
-                                <input type="number" id="travel_time_minutes" v-model.number="form.travel_time_minutes" class="input-field" placeholder="e.g., 30" required />
-                            </div>
+                        </div>
+
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                              <div>
                                 <label for="ethnicity">Ethnicity</label>
                                 <select id="ethnicity" v-model="form.ethnicity" class="input-field" required>
@@ -364,6 +404,9 @@
 import { Head, Link as InertiaLink, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
+// Transportation modes array for checkboxes
+const transportationModes = ref([]);
+
 // Define form structure based on StudentController@store validation
 const form = useForm({
     first_name: '',
@@ -384,6 +427,7 @@ const form = useForm({
     postal_code: '',
     study_device: '',
     is_solo_parent: false,
+    is_ofw_dependent: false,
     solo_parent_id: '',
     has_part_time_job: false,
     daily_fare: '',
@@ -397,12 +441,15 @@ const form = useForm({
     indigenous_group: '',
     pwd: false,
     pwd_id: '',
+    disability_type: '',
     housing_status: '',
     family_income: '',
     processing: false,
 });
 
 const submitStudentForm = () => {
+    // Convert transportation modes array to comma-separated string
+    form.transportation_mode = transportationModes.value.join(',');
     form.post('/student', {
         onSuccess: () => {
             // Redirect handled by controller
@@ -603,10 +650,6 @@ button[type="submit"]:disabled {
     line-height: 1.2;
 }
 
-.conditional-input .input-field {
-    /* No height override needed, let it be natural */
-}
-
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -716,11 +759,6 @@ select.input-field {
 }
 
 /* @media (min-width: 768px) { ... .logo-container img { max-height: none; } ... } */ /* Remove as size is controlled by template classes */
-
-/* Additional styling for the logo container if needed */
-.logo-container {
-    /* Example: Add a background or border if desired */
-}
 
 /* ===== ENHANCED LOGIN BUTTON IN NAVIGATION ===== */
 .login-button {
